@@ -1,0 +1,58 @@
+body {
+  background-color: #0f0f0f;
+  color: white;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+header {
+  display: flex;
+  align-items: center;
+  background-color: #0f0f0f;
+  padding: 10px;
+}
+.guild-icon {
+  height: 40px;
+  margin-right: 10px;
+}
+h1 {
+  flex: 1;
+  color: #d4af37;
+}
+button {
+  background-color: #d4af37;
+  border: none;
+  padding: 8px 12px;
+  color: black;
+  cursor: pointer;
+  margin: 0 5px;
+  border-radius: 5px;
+}
+button:hover {
+  background-color: #b8902f;
+}
+input[type="text"] {
+  background-color: #0f0f0f;
+  border: 1px solid #d4af37;
+  color: white;
+  padding: 6px;
+  border-radius: 5px;
+}
+.item-card {
+  border: 1px solid #d4af37;
+  padding: 10px;
+  margin: 10px;
+  display: inline-block;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.item-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px #d4af37;
+}
+.item-name {
+  color: white;
+}
+.obtained {
+  color: #00ff00;
+}

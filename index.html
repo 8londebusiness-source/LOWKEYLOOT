@@ -1,115 +1,19 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Guild Loot Tracker</title>
-  <style>
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background:#0e1117; color:#e6edf3; margin:0; }
-    header { padding:16px 20px; border-bottom:1px solid #2d333b; position:sticky; top:0; background:#0e1117; z-index:5;}
-    .wrap { max-width:1100px; margin:0 auto; padding:20px;}
-    .grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:16px; }
-    .card { background:#161b22; border:1px solid #2d333b; border-radius:14px; padding:14px; transition:transform .16s ease, box-shadow .2s ease; }
-    .card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,.35); }
-    .row { display:flex; align-items:center; gap:10px; }
-    img.icon { width:38px; height:38px; border-radius:8px; border:1px solid #30363d; background:#0b0f14; object-fit:cover; }
-    .name { font-weight:700; font-size:15px; line-height:1.2; }
-    .tags { margin-top:10px; display:flex; gap:6px; flex-wrap:wrap; }
-    .tag { background:#21262d; border:1px solid #30363d; color:#c9d1d9; padding:4px 8px; border-radius:100px; font-size:12px;}
-    dialog { background:#0f141a; color:#e6edf3; border:1px solid #2d333b; border-radius:12px; width:min(520px, 92vw); }
-    dialog::backdrop { background: rgba(0,0,0,.5); backdrop-filter: blur(1px); }
-    .modal-head { padding:16px 18px; border-bottom:1px solid #22272e; font-weight:700 }
-    .modal-body { padding:16px 18px; }
-    .btn { background:#238636; border:none; color:white; padding:8px 10px; border-radius:8px; font-weight:600; cursor:pointer; text-decoration:none; }
-    .search { width:100%; padding:10px 12px; border-radius:10px; border:1px solid #2d333b; background:#0b0f14; color:#e6edf3; }
-    .muted { color:#9aa6b2; font-size:13px; }
-    footer { color:#8b949e; font-size:12px; text-align:center; padding:24px; border-top:1px solid #2d333b; margin-top:30px;}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guild Loot Tracker</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <div class="wrap">
-      <div class="row" style="justify-content:space-between;">
-        <div class="row">
-          <h1 style="font-size:18px; margin:0 8px 0 0;">Guild Loot Tracker</h1>
-          <span class="muted">click an item to see the next-in-line list</span>
-        </div>
-        <div class="row" style="gap:10px;">
-          <input id="q" class="search" style="max-width:260px;" placeholder="Search items or names..." />
-          <a href="history.html" class="btn">View History</a>
-        </div>
-      </div>
-    </div>
-  </header>
-  <div class="wrap">
-    <div id="grid" class="grid"></div>
-  </div>
-
-  <dialog id="dlg">
-    <div class="modal-head" id="dlg-title">Item</div>
-    <div class="modal-body">
-      <div id="dlg-body"></div>
-    </div>
-  </dialog>
-
-  <script>
-  window.EMBEDDED_DATA = [{"item": "DFT", "full_name": "Drake Fang Talisman", "next1": "Skeliiking", "next2": "Lion", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_misc_bone_06.jpg"}, {"item": "Nelths Tear", "full_name": "Neltharion's Tear", "next1": "Lily", "next2": "", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_stone_15.jpg"}, {"item": "Maladath", "full_name": "Maladath, Runed Blade of the Black Flight", "next1": "Glimpse", "next2": "Doom", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_sword_49.jpg"}, {"item": "Perds", "full_name": "Perdition's Blade", "next1": "Doom", "next2": "Barricade", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_sword_48.jpg"}, {"item": "CTS", "full_name": "Chromatically Tempered Sword", "next1": "Barricade", "next2": "", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_sword_51.jpg"}, {"item": "Eye of C'thun", "full_name": "Eye of C'Thun", "next1": "Blonde", "next2": "Krook", "next3": "Daze", "icon_url": "https://static.icy-veins.com/images/classic/icons/spell_shadow_detectinvisibility.jpg"}, {"item": "Dark Storm Gauntlets", "full_name": "Dark Storm Gauntlets", "next1": "Syntropics", "next2": "", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_gauntlets_17.jpg"}, {"item": "GOA", "full_name": "Gauntlets of Annihilation", "next1": "Sonts", "next2": "Blinkz", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_gauntlets_31.jpg"}, {"item": "Eyestalk Waistcord", "full_name": "Eyestalk Waist Cord", "next1": "Carth", "next2": "Daze", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_belt_12.jpg"}, {"item": "Badge", "full_name": "Badge of the Swarmguard", "next1": "ilena", "next2": "Sonts", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_misc_ahnqirajtrinket_04.jpg"}, {"item": "Jom", "full_name": "Jom Gabbar", "next1": "Hermit", "next2": "", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_misc_enggizmos_19.jpg"}, {"item": "Armament", "full_name": "Imperial Qiraji Armaments", "next1": " Brugar", "next2": "Dagger", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_staff_24.jpg"}, {"item": "Concentrated Hatred", "full_name": "Cloak of Concentrated Hatred", "next1": "Dagger", "next2": "Skeliiking", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_misc_cape_18.jpg"}, {"item": "2.5 Warrior Legs", "full_name": "Conqueror's Legguards (T2.5 Warrior Legs)", "next1": "Blinkz", "next2": "Brugar", "next3": "Doom", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_pants_plate_09.jpg"}, {"item": "2.5 Warrior Chest", "full_name": "Conqueror's Breastplate (T2.5 Warrior Chest)", "next1": "Salmon", "next2": "Simple", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_chest_plate09.jpg"}, {"item": "2.5 Warrior Shoulders", "full_name": "Conqueror's Spaulders (T2.5 Warrior Shoulders)", "next1": "Salmon", "next2": "", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_shoulder_29.jpg"}, {"item": "2.5 Warrior Helm", "full_name": "Conqueror's Crown (T2.5 Warrior Helm)", "next1": "Salmon", "next2": "Doom", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_helmet_71.jpg"}, {"item": "Hive Defiler Bracers", "full_name": "Hive Defiler Wristguards", "next1": "Decap", "next2": "", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_bracer_19.jpg"}, {"item": "Qiraji Exe", "full_name": "Qiraji Executioner", "next1": "BearyBlast", "next2": "Skeliiking", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_sword_40.jpg"}, {"item": "AQR", "full_name": "Ancient Qiraji Ripper", "next1": "Barricade", "next2": "", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_sword_59.jpg"}, {"item": "BPOA", "full_name": "Blessed Pauldrons of Anubisath", "next1": "Decap", "next2": "Lion", "next3": "", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_shoulder_35.jpg"}, {"item": "Regalia", "full_name": "Imperial Qiraji Regalia", "next1": "Owns", "next2": "Taysak", "next3": "Beary", "icon_url": "https://static.icy-veins.com/images/classic/icons/inv_chest_cloth_12.jpg"}];
-    const state = { rows: window.EMBEDDED_DATA || [], filtered: [] };
-
-    function render() {
-      const grid = document.getElementById('grid');
-      grid.innerHTML = '';
-      for (const r of state.filtered) {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-          <div class="row">
-            <img class="icon" alt="" src="${r.icon_url || 'https://static.icy-veins.com/images/classic/icons/inv_misc_questionmark.jpg'}" />
-            <div>
-              <div class="name">${r.full_name || r.item}</div>
-              <div class="muted">${r.item !== r.full_name ? r.item : ''}</div>
-            </div>
-          </div>
-          <div class="tags">
-            ${['next_player','queue'].map(k => r[k]).filter(Boolean).map(n => '<span class="tag">'+n+'</span>').join('')}
-          </div>
-        `;
-        card.onclick = () => openModal(r);
-        grid.appendChild(card);
-      }
-    }
-
-    function openModal(r) {
-      const dlg = document.getElementById('dlg');
-      document.getElementById('dlg-title').textContent = r.full_name || r.item;
-      const queueNames = r.queue ? r.queue.split(';').map(s => s.trim()).filter(Boolean) : [];
-      document.getElementById('dlg-body').innerHTML = queueNames.length
-        ? '<div style="display:flex;gap:6px;flex-wrap:wrap;">' + queueNames.map(n => '<span class="tag">'+n+'</span>').join('') + '</div>'
-        : '<span class="muted">No queue set</span>';
-      dlg.showModal();
-      dlg.onclick = (e) => { if (e.target === dlg) dlg.close(); };
-    }
-
-    function setupSearch() {
-      const q = document.getElementById('q');
-      q.addEventListener('input', () => {
-        const t = q.value.toLowerCase();
-        state.filtered = state.rows.filter(r =>
-          (r.full_name||'').toLowerCase().includes(t) ||
-          (r.item||'').toLowerCase().includes(t) ||
-          (r.next_player||'').toLowerCase().includes(t) ||
-          (r.queue||'').toLowerCase().includes(t)
-        );
-        render();
-      });
-    }
-
-    (function init() {
-      state.filtered = state.rows;
-      setupSearch();
-      render();
-    })();
-  </script>
-  <footer>Generated with embedded data — update data by replacing this file with a new export from me.</footer>
+<header>
+  <img src="guild-icon.png" alt="Guild Icon" class="guild-icon">
+  <h1>Guild Loot Tracker</h1>
+  <button onclick="location.href='history.html'">View History</button>
+  <input type="text" id="searchBar" placeholder="Search loot..." onkeyup="filterLoot()">
+</header>
+<main id="lootContainer"></main>
+<script src="main.js"></script>
 </body>
 </html>
