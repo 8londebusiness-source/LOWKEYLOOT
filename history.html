@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Loot History</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Loot History</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
 <header>
-  <img src="guild-icon.png" alt="Guild Icon" class="guild-icon">
+  <img src="guild-icon.png" alt="Guild Icon"/>
   <h1>Loot History</h1>
-  <button onclick="location.href='index.html'">Back to Loot Tracker</button>
-  <input type="text" id="searchBar" placeholder="Search history..." onkeyup="filterHistory()">
+  <div id="controls">
+    <a class="btn" href="index.html">← Back to Loot Tracker</a>
+    <input id="historySearch" type="search" placeholder="Search history…" oninput="filterHistory()"/>
+  </div>
 </header>
-<main id="historyContainer"></main>
+<div class="container" id="historyContainer"></div>
 <script src="history.js"></script>
 </body>
 </html>
