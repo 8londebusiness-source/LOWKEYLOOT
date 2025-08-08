@@ -1,16 +1,42 @@
-const LOOT_CSV = 'loot.csv';
-const HIST_CSV = 'history.csv';
-
+// --- Robust CSV parsing (handles quotes, commas, CRLF) ---
+function csvToRows(text){
+  const rows=[]; let row=[], field='', inQuotes=false;
+  for(let i=0;i<text.length;i++){
+    const ch=text[i];
+    if(ch === '"'){
+      if(inQuotes && text[i+1] === '"'){ field+='"'; i++; }
+      else { inQuotes = !inQuotes; }
+    } else if(ch === ',' && !inQuotes){
+      row.push(field); field='';
+    } else if((ch === '\n' || ch === '\r') && !inQuotes){
+      if(ch === '\r' && text[i+1] === '\n') i++;
+      row.push(field); rows.push(row); row=[]; field='';
+    } else {
+      field += ch;
+    }
+  }
+  // push last field/row
+  row.push(field); rows.push(row);
+  // filter empty rows
+  return rows.filter(r => r.some(c => (c||'').trim().length));
+}
 function parseCSV(text){
-  const lines = text.trim().split(/\r?\n/);
-  const headers = lines.shift().split(',').map(h=>h.trim());
-  return lines.filter(Boolean).map(line=>{
-    const cols = line.split(','); // works for your data (no quoted commas)
-    const o = {}; headers.forEach((h,i)=> o[h] = (cols[i]||'').trim());
+  const rows = csvToRows(text);
+  const headers = rows.shift().map(h=>h.trim());
+  return rows.map(cols => {
+    const o = {};
+    headers.forEach((h,idx)=> o[h] = (cols[idx]||'').trim());
     return o;
   });
 }
 const norm = s => (s||'').toLowerCase().replace(/[\[\]"']/g,'').trim();
+const pick = (obj, keys) => {
+  for(const k of keys){ if(obj[k] !== undefined && String(obj[k]).trim() !== '') return String(obj[k]).trim(); }
+  return '';
+};
+
+const LOOT_CSV = 'loot.csv';
+const HIST_CSV = 'history.csv';
 
 async function loadLoot(){
   const [lootTxt, histTxt] = await Promise.all([
@@ -20,21 +46,24 @@ async function loadLoot(){
   const loot = parseCSV(lootTxt);
   const hist = parseCSV(histTxt);
 
-  // Build a set of "item|player" that have already received (from history)
-  const itemKey = r => (norm(r.Item)||norm(r.item)) + '|' + (norm((r.Player||r.player||'').split('-')[0]));
-  const receivedSet = new Set(hist.map(itemKey));
+  // Build "item|player" set from history
+  const receivedSet = new Set(hist.map(r => {
+    const item = pick(r, ['item','Item','full_name','Full Name']);
+    const playerRaw = pick(r, ['player','Player']);
+    const player = playerRaw.split('-')[0];
+    return norm(item)+'|'+norm(player);
+  }));
 
   const cont = document.getElementById('lootContainer');
   cont.innerHTML = '';
 
-  loot.forEach(r=>{
-    const item = r.full_name || r.item || r.Item;
-    const icon = r.icon_url || r['Icon URL'] || '';
-    const next1 = r.next1 || r['Next'] || r.next_player || '';
-    const next2 = r.next2 || r['2nd'] || '';
-    const next3 = r.next3 || r['3rd'] || '';
-
-    const already = receivedSet.has(norm(item)+'|'+norm(next1));
+  loot.forEach(r => {
+    const item = pick(r, ['full_name','Full Name','item','Item']);
+    const icon = pick(r, ['icon_url','Icon URL','image_url','Image URL']);
+    const next1 = pick(r, ['next1','Next','next_player','Next Assigned To','Next Assigned To:']);
+    const next2 = pick(r, ['next2','2nd','Second','2nd:','Second:']);
+    const next3 = pick(r, ['next3','3rd','Third','3rd:','Third:']);
+    const already = item && next1 && receivedSet.has(norm(item)+'|'+norm(next1));
 
     const card = document.createElement('div');
     card.className = 'item-card';
